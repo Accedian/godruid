@@ -3,6 +3,7 @@ package godruid
 type Filter struct {
 	Type         string        `json:"type"`
 	Dimension    string        `json:"dimension,omitempty"`
+	Dimensions   DimSpec       `json:"dimensions,omitempty"`
 	Value        interface{}   `json:"value,omitempty"`
 	Values       interface{}   `json:"values,omitempty"`
 	Pattern      string        `json:"pattern,omitempty"`
@@ -109,6 +110,13 @@ func FilterLowerUpperBound(dimension string, ordering Ordering, lowerBound float
 		LowerStrict: lowerStrict,
 		Upper:       upperBound,
 		UpperStrict: upperStrict,
+	}
+}
+
+func FilterColumnComparison(dimensions []DimSpec) *Filter {
+	return &Filter{
+		Type:        "columnComparison",
+		Dimensions:   dimensions,
 	}
 }
 
