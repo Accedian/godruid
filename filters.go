@@ -1,22 +1,23 @@
 package godruid
 
 type Filter struct {
-	Type         string        `json:"type"`
-	Dimension    string        `json:"dimension,omitempty"`
-	Dimensions   DimSpec       `json:"dimensions,omitempty"`
-	Value        interface{}   `json:"value,omitempty"`
-	Values       interface{}   `json:"values,omitempty"`
-	Pattern      string        `json:"pattern,omitempty"`
-	Function     string        `json:"function,omitempty"`
-	Field        *Filter       `json:"field,omitempty"`
-	Fields       []*Filter     `json:"fields,omitempty"`
-	Upper        float32       `json:"upper,omitempty"`
-	Lower        float32       `json:"lower,omitempty"`
-	Ordering     Ordering      `json:"ordering,omitempty"`
-	UpperStrict  bool          `json:"upperStrict,omitempty"`
-	LowerStrict  bool          `json:"lowerStrict,omitempty"`
-	ExtractionFn *ExtractionFn `json:"extractionFn,omitempty"`
-	Bound        *Bound        `json:"bound,omitempty"`
+	Type         string             `json:"type"`
+	Dimension    string             `json:"dimension,omitempty"`
+	Dimensions   DimSpec            `json:"dimensions,omitempty"`
+	Value        interface{}        `json:"value,omitempty"`
+	Values       interface{}        `json:"values,omitempty"`
+	Pattern      string             `json:"pattern,omitempty"`
+	Function     string             `json:"function,omitempty"`
+	Field        *Filter            `json:"field,omitempty"`
+	Fields       []*Filter          `json:"fields,omitempty"`
+	Upper        float32            `json:"upper,omitempty"`
+	Lower        float32            `json:"lower,omitempty"`
+	Ordering     Ordering           `json:"ordering,omitempty"`
+	UpperStrict  bool               `json:"upperStrict,omitempty"`
+	LowerStrict  bool               `json:"lowerStrict,omitempty"`
+	ExtractionFn *ExtractionFn      `json:"extractionFn,omitempty"`
+	Bound        *Bound             `json:"bound,omitempty"`
+	Query        *SearchFilterQuery `json:"query,omitempty"`
 }
 
 type Bound struct {
@@ -47,6 +48,13 @@ const (
 type SpatialCoordinates struct {
 	Latitude  float64
 	Longitude float64
+}
+
+type SearchFilterQuery struct {
+	Type          string   `json:"type"`
+	Value         string   `json:"value,omitempty"`
+	Values        []string `json:"values,omitempty"`
+	CaseSensitive bool     `json:"caseSensitive,omitempty"`
 }
 
 func FilterSpatialRectangle(dimension string, minCoords SpatialCoordinates, maxCoords SpatialCoordinates) *Filter {
@@ -133,6 +141,34 @@ func FilterJavaScript(dimension, function string) *Filter {
 		Type:      "javascript",
 		Dimension: dimension,
 		Function:  function,
+	}
+}
+
+func FilterSearch(dimension string, caseSensitive bool, values ...string) *Filter {
+	query := &SearchFilterQuery{
+		CaseSensitive: caseSensitive,
+	}
+
+	if len(values) == 1 {
+		query.Type = "contains"
+		query.Value = values[0]
+	} else {
+		query.Type = "fragment"
+		query.Values = values
+	}
+
+	return &Filter{
+		Type:      "search",
+		Dimension: dimension,
+		Query:     query,
+	}
+}
+
+func FilterLike(dimension, pattern string) *Filter {
+	return &Filter{
+		Type:      "like",
+		Dimension: dimension,
+		Pattern:   pattern,
 	}
 }
 
