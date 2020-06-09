@@ -3,10 +3,11 @@ package godruid
 type DimSpec interface{}
 
 type Dimension struct {
-	Type         string      `json:"type"`
-	Dimension    string      `json:"dimension"`
-	OutputName   string      `json:"output_name"`
-	ExtractionFn interface{} `json:"extractionFn,omitempty"`
+	Type         string       `json:"type"`
+	Dimension    string       `json:"dimension"`
+	OutputName   string       `json:"outputName"`
+	Name         string       `json:"name"`
+	ExtractionFn ExtractionFn `json:"extractionFn,omitempty"`
 }
 
 type DimExtractionFn struct {
