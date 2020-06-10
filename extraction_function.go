@@ -2,17 +2,13 @@ package godruid
 
 type ExtractionFn interface{}
 
-type RegisteredLookupExtractionFn struct {
-	Type   string `json:"type"`
-	Lookup string `json:"lookup"`
-}
-
-type InlineLookupExtractionFn struct {
-	Type                    string               `json:"type"`
-	LookUp                  *LookUpExtractionMap `json:"lookup,omitempty"`
-	RetainMissingValue      bool                 `json:"retainMissingValue,omitempty"`
-	ReplaceMissingValueWith string               `json:"replaceMissingValueWith,omitempty"`
-	Injective               bool                 `json:"injective,omitempty"`
+type LookupExtractionFn struct {
+	Type                    string      `json:"type"`
+	LookUp                  interface{} `json:"lookup,omitempty"`
+	RetainMissingValue      bool        `json:"retainMissingValue,omitempty"`
+	ReplaceMissingValueWith string      `json:"replaceMissingValueWith,omitempty"`
+	Injective               bool        `json:"injective,omitempty"`
+	Optimize                bool        `json:"optimize,omitempty"`
 }
 
 type LookUpExtractionMap struct {
@@ -28,7 +24,7 @@ type TimeExtractionFn struct {
 }
 
 func DimExFnInlineLookUp(lookups map[string]interface{}, retainMissingValue bool, replaceMissingValueWith string, injective bool) ExtractionFn {
-	return &InlineLookupExtractionFn{
+	return &LookupExtractionFn{
 		Type:                    "lookup",
 		RetainMissingValue:      retainMissingValue,
 		ReplaceMissingValueWith: replaceMissingValueWith,
@@ -37,5 +33,15 @@ func DimExFnInlineLookUp(lookups map[string]interface{}, retainMissingValue bool
 			Type: "map",
 			Map:  lookups,
 		},
+	}
+}
+
+func DimExFnRegisteredLookup(lookup string, retainMissingValue bool, replaceMissingValueWith string, optimize bool) ExtractionFn {
+	return &LookupExtractionFn{
+		Type:                    "registeredLookup",
+		RetainMissingValue:      retainMissingValue,
+		ReplaceMissingValueWith: replaceMissingValueWith,
+		Optimize:                optimize,
+		LookUp:                  lookup,
 	}
 }
