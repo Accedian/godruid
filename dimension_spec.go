@@ -46,7 +46,6 @@ func DimExtraction(dimension, outputName string, fn *DimExtractionFn) DimSpec {
 	}
 }
 
-
 func DimLookup(dimension, outputName, name string) DimSpec {
 	return &Dimension{
 		Type:       "lookup",
