@@ -15,7 +15,7 @@ type Filter struct {
 	Ordering     Ordering           `json:"ordering,omitempty"`
 	UpperStrict  bool               `json:"upperStrict,omitempty"`
 	LowerStrict  bool               `json:"lowerStrict,omitempty"`
-	ExtractionFn *ExtractionFn      `json:"extractionFn,omitempty"`
+	ExtractionFn ExtractionFn       `json:"extractionFn,omitempty"`
 	Bound        *Bound             `json:"bound,omitempty"`
 	Query        *SearchFilterQuery `json:"query,omitempty"`
 }
