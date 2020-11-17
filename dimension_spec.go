@@ -3,10 +3,11 @@ package godruid
 type DimSpec interface{}
 
 type Dimension struct {
-	Type         string           `json:"type"`
-	Dimension    string           `json:"dimension"`
-	OutputName   string           `json:"outputName"`
-	ExtractionFn *DimExtractionFn `json:"extractionFn,omitempty"`
+	Type         string       `json:"type"`
+	Dimension    string       `json:"dimension"`
+	OutputName   string       `json:"outputName"`
+	Name         string       `json:"name"`
+	ExtractionFn ExtractionFn `json:"extractionFn,omitempty"`
 }
 
 type DimExtractionFn struct {
@@ -42,6 +43,15 @@ func DimExtraction(dimension, outputName string, fn *DimExtractionFn) DimSpec {
 		Dimension:    dimension,
 		OutputName:   outputName,
 		ExtractionFn: fn,
+	}
+}
+
+func DimLookup(dimension, outputName, name string) DimSpec {
+	return &Dimension{
+		Type:       "lookup",
+		Dimension:  dimension,
+		OutputName: outputName,
+		Name:       name,
 	}
 }
 

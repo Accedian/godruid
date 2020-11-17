@@ -3,6 +3,7 @@ package godruid
 import (
 	"fmt"
 	. "github.com/smartystreets/goconvey/convey"
+	"net/http"
 	"testing"
 )
 
@@ -15,7 +16,7 @@ func TestGroupby(t *testing.T) {
 			Filter:       FilterAnd(FilterJavaScript("hour", "function(x) { return(x >= 1) }"), nil),
 			LimitSpec:    LimitDefault(5),
 			Dimensions:   []DimSpec{"campaign_id"},
-			Aggregations: []Aggregation{AggRawJson(`{ "type" : "count", "name" : "count" }`), AggLongSum("impressions", "impressions")},
+			Aggregations: []Aggregation{*AggRawJson(`{ "type" : "count", "name" : "count" }`), *AggLongSum("impressions", "impressions")},
 			PostAggregations: []PostAggregation{PostAggArithmetic("imp/count", "/", []PostAggregation{
 				PostAggFieldAccessor("impressions"),
 				PostAggRawJson(`{ "type" : "fieldAccess", "fieldName" : "count" }`)})},
@@ -23,9 +24,10 @@ func TestGroupby(t *testing.T) {
 		client := Client{
 			Url:   "http://192.168.10.60:8009",
 			Debug: true,
+			HttpClient: http.DefaultClient,
 		}
 
-		err := client.Query(query)
+		err := client.Query(query, "")
 		fmt.Println("requst", client.LastRequest)
 		So(err, ShouldEqual, nil)
 
@@ -50,9 +52,10 @@ func TestSearch(t *testing.T) {
 		client := Client{
 			Url:   "http://192.168.10.60:8009",
 			Debug: true,
+			HttpClient: http.DefaultClient,
 		}
 
-		err := client.Query(query)
+		err := client.Query(query, "")
 		So(err, ShouldEqual, nil)
 
 		fmt.Println("requst", client.LastRequest)
